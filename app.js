@@ -10,10 +10,12 @@ const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const skillsRouter = require('./routes/skills');
 
-const app = express();
 const cors = require('cors');
 const errorHandler = require('./middlewares/error');
+const connectDB = require('./lib/dbinit');
 
+const app = express();
+connectDB();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

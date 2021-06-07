@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const TagSchema = new Schema({
+const SkillSchema = new Schema({
   name: {
     type: String,
     minLength: [2, "Maximum 500 characters"],
@@ -10,4 +10,4 @@ const TagSchema = new Schema({
   },
 });
 
-module.exports = mongoose.model("Skill", UserSchema);
+module.exports = mongoose.model("Skill", SkillSchema);

@@ -1,5 +1,4 @@
 const User = require('../models/Skill');
-const mongoose = require('mongoose');
 
 const getUsers = async (req, res, next) => {
   try {
