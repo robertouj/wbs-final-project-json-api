@@ -1,9 +1,9 @@
 const express = require("express");
-const { getUsers } = require("../controllers/users");
+const { getSkills } = require("../controllers/skills");
 
 const router = express.Router();
 
 /* GET skills listing. */
-router.route("/").get(getUsers);
+router.route("/").get(getSkills);
 
 module.exports = router;
