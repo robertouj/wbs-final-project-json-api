@@ -11,6 +11,16 @@ const getUsers = async (req, res, next) => {
   }
 };
 
+const getUser = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const user = await User.findById(id);
+    res.json({ success: true, msg: 'show selected user', data: user })
+  } catch(err) {
+    next(err)
+  }
+};
+
 const getUsersBySkill = async (req, res, next) => {
   try {
     const { name } = req.params;
@@ -42,5 +52,6 @@ const getUsersBySkill = async (req, res, next) => {
 
 module.exports = {
   getUsers,
+  getUser,
   getUsersBySkill,
 };
