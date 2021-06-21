@@ -5,6 +5,9 @@ const getUsers = async (req, res, next) => {
   try {
     const users = await User.find().populate("skills");
 
+    const response = await User.find().populate("skills");
+    //console.log(response);
+
     res.json({ success: true, msg: "show all users", data: users });
   } catch (err) {
     next(err);
@@ -14,7 +17,7 @@ const getUsers = async (req, res, next) => {
 const getUser = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const user = await User.findById(id);
+    const user = await User.findById(id).populate("skills");
     res.json({ success: true, msg: 'show selected user', data: user })
   } catch(err) {
     next(err)
@@ -50,8 +53,66 @@ const getUsersBySkill = async (req, res, next) => {
   }
 };
 
+const updateUser = (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { name, photo, bio, experience, availability, skills } = req.body;
+    //console.log(skills);
+    const data = {
+      "name": "roberto"
+    }
+
+    
+    const newSkills = checkSkillNames(skills);
+
+    //const response = User.find().populate("skills");
+    //console.log();
+
+
+
+    const user = User.findByIdAndUpdate(id, { skills: newSkills }, { new: true });
+    res.json({ success: true, msg: `user with id ${id} updateds`, data: data })
+  } catch(err) {
+    next(err)
+  }
+};
+
+const checkSkillNames =  async (skills) => {
+  return await skills?.map( async (skill) => {
+    const resp = await Skill.find({name: skill.name});
+    if(resp[0]?.name) return skill;    
+    else {
+      const newSkill = await Skill.create({ name: skill.name});      
+      return newSkill;
+    }    
+  })
+}
+
+
 module.exports = {
   getUsers,
   getUser,
+  updateUser,
   getUsersBySkill,
 };
+
+
+/*
+{
+    "_id": "60be54163e9bbcd950a171c2",
+    "skills": [
+            {
+                "_id": "60be5aa03e9bbcd950a171c5",
+                "name": "React"
+            },
+            {
+                "_id": "60be5a8f3e9bbcd950a171c4",
+                "name": "JavaScript"
+            },
+            {
+                "name": "SpeakGerman"
+            }
+        ]
+}
+
+*/
