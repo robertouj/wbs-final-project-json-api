@@ -1,5 +1,7 @@
 const User = require("../models/User");
 const Skill = require("../models/Skill");
+const mongoose = require("mongoose");
+const { ObjectId } = mongoose.Types;
 
 const getUsers = async (req, res, next) => {
   try {
@@ -87,16 +89,17 @@ const updateUser = async (req, res, next) => {
 };
 
 const getSkillsArray = async (skills) => {
-  return Promise.all(skills.map(async (skill) => {
+  return Promise.all(
+    skills.map(async (skill) => {
       const isNewSkill = await checkNewSkill(skill.name);
       if (isNewSkill) {
+        const newSkill = await createSkill(skill);
         return {
-          _id: skill._id,
+          _id: String(newSkill._id),
         };
       }
-      const newSkill = await createSkill(skill.name);
       return {
-        _id: String(newSkill._id),
+        _id: skill._id,
       };
     })
   );
@@ -104,15 +107,14 @@ const getSkillsArray = async (skills) => {
 
 const checkNewSkill = async (skillName) => {
   const resp = await Skill.find({ name: skillName });
-  
-  if (resp.length !== 0) {
-    return true;
-  }
+  if (resp.length === 0) return true;
   return false;
 };
 
-const createSkill = async (skillName) => {
-  const newSkill = await Skill.create({ name: skillName });
+const createSkill = async (skill) => {
+  const newSkill = skill._id
+    ? await Skill.create({ _id: ObjectId(skill._id), name: skill.name })
+    : await Skill.create({ name: skill.name });
   return newSkill;
 };
 
