@@ -18,9 +18,9 @@ const getUser = async (req, res, next) => {
   try {
     const { id } = req.params;
     const user = await User.findById(id).populate("skills");
-    res.json({ success: true, msg: 'show selected user', data: user })
-  } catch(err) {
-    next(err)
+    res.json({ success: true, msg: "show selected user", data: user });
+  } catch (err) {
+    next(err);
   }
 };
 
@@ -30,22 +30,28 @@ const getUsersBySkill = async (req, res, next) => {
 
     /**
      * - find({ "name": { "$regex": "", "$options": "i" } }, "_id")
-     * 
+     *
      *   This expression search a string inside other string in the field name and is no case sensitive.
-     * 
-     *   The second parameter "_id" is the selection of fields to show in the result, that 
+     *
+     *   The second parameter "_id" is the selection of fields to show in the result, that
      *   is the necessary format for the array in the .in() of the next command.
-     * 
+     *
      * - User.find().where("skills").in(skills).populate("skills")
-     * 
+     *
      *   Create a query for the field "skills" and the values in the array "skills".
-     *   The array of ids need to be in the form: 
+     *   The array of ids need to be in the form:
      *   ["_id": "60be5aa03e9bbcd950a171c5","_id": "60be5a8f3e9bbcd950a171c4",]
-     * 
-     */    
+     *
+     */
     //TODO: encode uri in frontend. Decode uri here. change spaces for |
-    const skills = await Skill.find({ "name": { "$regex": name, "$options": "i" } }, "_id");
-    const users = await User.find().where("skills").in(skills).populate("skills");
+    const skills = await Skill.find(
+      { name: { $regex: name, $options: "i" } },
+      "_id"
+    );
+    const users = await User.find()
+      .where("skills")
+      .in(skills)
+      .populate("skills");
 
     res.json({ success: true, msg: "show all users", data: users });
   } catch (err) {
@@ -53,41 +59,62 @@ const getUsersBySkill = async (req, res, next) => {
   }
 };
 
-const updateUser = (req, res, next) => {
+const updateUser = async (req, res, next) => {
   try {
     const { id } = req.params;
     const { name, photo, bio, experience, availability, skills } = req.body;
-    //console.log(skills);
-    const data = {
-      "name": "roberto"
-    }
 
-    
-    const newSkills = checkSkillNames(skills);
+    const newSkillsArray = await getSkillsArray(skills);
 
-    //const response = User.find().populate("skills");
-    //console.log();
+    console.log(newSkillsArray);
 
+    // an example if valid user:
+    // { name: "name", photo: "myphoto", bio: "my bio", experience: 3, availability: {schedule: true, live: false}, skills: newSkillsArray },
+    const user = await User.findByIdAndUpdate(
+      id,
+      { name, photo, bio, experience, availability, skills: newSkillsArray },
+      { new: true }
+    );
 
-
-    const user = User.findByIdAndUpdate(id, { skills: newSkills }, { new: true });
-    res.json({ success: true, msg: `user with id ${id} updateds`, data: data })
-  } catch(err) {
-    next(err)
+    res.json({
+      success: true,
+      msg: `user with id ${id} updated`,
+      data: newSkillsArray,
+    });
+  } catch (err) {
+    next(err);
   }
 };
 
-const checkSkillNames =  async (skills) => {
-  return await skills?.map( async (skill) => {
-    const resp = await Skill.find({name: skill.name});
-    if(resp[0]?.name) return skill;    
-    else {
-      const newSkill = await Skill.create({ name: skill.name});      
-      return newSkill;
-    }    
-  })
-}
+const getSkillsArray = async (skills) => {
+  return Promise.all(skills.map(async (skill) => {
+      const isNewSkill = await checkNewSkill(skill.name);
+      if (isNewSkill) {
+        return {
+          _id: skill._id,
+        };
+      }
+      const newSkill = await createSkill(skill.name);
+      return {
+        _id: String(newSkill._id),
+      };
+    })
+  );
+};
 
+const checkNewSkill = async (skillName) => {
+  const resp = await Skill.find({ name: skillName });
+  
+  if (resp.length !== 0) {
+    return true;
+  }
+  return false;
+};
+
+const createSkill = async (skillName) => {
+  const newSkill = await Skill.create({ name: skillName });
+  return newSkill;
+};
 
 module.exports = {
   getUsers,
@@ -95,24 +122,3 @@ module.exports = {
   updateUser,
   getUsersBySkill,
 };
-
-
-/*
-{
-    "_id": "60be54163e9bbcd950a171c2",
-    "skills": [
-            {
-                "_id": "60be5aa03e9bbcd950a171c5",
-                "name": "React"
-            },
-            {
-                "_id": "60be5a8f3e9bbcd950a171c4",
-                "name": "JavaScript"
-            },
-            {
-                "name": "SpeakGerman"
-            }
-        ]
-}
-
-*/
