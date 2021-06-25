@@ -8,6 +8,9 @@ const SkillSchema = new Schema({
     maxLength: [50, "Maximum 500 characters"],
     required: [true, "Please add the skill"],
   },
+},
+{
+  versionKey: false, // remove the version parameter __v
 });
 
 module.exports = mongoose.model("Skill", SkillSchema);

@@ -12,6 +12,9 @@ const availabilitySchema = new mongoose.Schema({
     required: [true, "Please add option live"],
     default: false,
   },
+},
+{
+  versionKey: false, // remove the version parameter __v
 });
 
 const UserSchema = new Schema({
@@ -37,6 +40,7 @@ const UserSchema = new Schema({
   },
   availability: {
     type: availabilitySchema,
+    _id: false,
     required: [true, "Please add availability"],
   },
   skills: [
@@ -46,6 +50,9 @@ const UserSchema = new Schema({
       required: true,
     },
   ],
+},
+{
+  versionKey: false, // remove the version parameter __v
 });
 
 module.exports = mongoose.model("User", UserSchema);
