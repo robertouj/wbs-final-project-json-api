@@ -86,24 +86,19 @@ const createUser = async (req, res, next) => {
 const updateUser = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { name, photo, bio, experience, availability, skills } = req.body;
-
+    const { name, photo, bio, experience, availability, skills, email, password } = req.body;
     const newSkillsArray = await getSkillsArray(skills);
 
-    console.log(newSkillsArray);
-
-    // an example if valid user:
-    // { name: "name", photo: "myphoto", bio: "my bio", experience: 3, availability: {schedule: true, live: false}, skills: newSkillsArray },
     const user = await User.findByIdAndUpdate(
       id,
-      { name, photo, bio, experience, availability, skills: newSkillsArray },
+      { name, photo, bio, experience, availability, skills: newSkillsArray, email, password },
       { new: true }
     );
 
     res.json({
       success: true,
       msg: `user with id ${id} updated`,
-      data: newSkillsArray,
+      data: user,
     });
   } catch (err) {
     next(err);
@@ -123,7 +118,7 @@ const deleteUser = async (req, res, next) => {
 
 const getSkillsArray = async (skills) => {
   return Promise.all(
-    skills.map(async (skill) => {
+    skills?.map(async (skill) => {
       const isNewSkill = await checkNewSkill(skill.name);
       if (isNewSkill) {
         const newSkill = await createSkill(skill);
@@ -156,18 +151,23 @@ const login = async (req, res, next) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      res.status(400).send('Please provide an email and password')
+      res.status(400).send('Please provide an email and password');
+      return;
     }
 
+    // needed +password because is not selected in the model 
     const user = await User.findOne({ email }).select('+password');
 
     if (!user) {
-      res.status(401).send('Invalid credentials')
+      res.status(401).send('Invalid credentials');
+      return;
     }
+    console.log(user);
 
     const doesPassMatch = await user.matchPassword(password);
     if (!doesPassMatch) {
-      res.status(401).send('Invalid credentials')
+      res.status(401).send('Invalid credentials');
+      return;
     }
 
     const token = user.getSignedJwtToken();
@@ -187,4 +187,5 @@ module.exports = {
   deleteUser,
   getUsersBySkill,
   getMe,
+  login,
 };
