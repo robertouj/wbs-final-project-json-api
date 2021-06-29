@@ -23,6 +23,15 @@ const getUser = async (req, res, next) => {
   }
 };
 
+const getMe = async (req, res, next) => {
+  const user = await User.findById(req.user.id);
+
+  res.json({
+    success: true,
+    data: user
+  });
+}
+
 const getUsersBySkill = async (req, res, next) => {
   try {
     const { name } = req.params;
@@ -58,6 +67,22 @@ const getUsersBySkill = async (req, res, next) => {
   }
 };
 
+const createUser = async (req, res, next) => {
+  try {
+
+    // insert user
+    const { username, email, password } = req.body;
+    const user = await User.create({ username, email, password });
+
+    // create token
+    const token = user.getSignedJwtToken();
+
+    res.json({ success: true, token })
+  } catch(err) {
+    next(err)
+  }
+};
+
 const updateUser = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -82,6 +107,17 @@ const updateUser = async (req, res, next) => {
     });
   } catch (err) {
     next(err);
+  }
+};
+
+const deleteUser = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    const user = await User.findByIdAndDelete(id);
+    res.json({ success: true, msg: `user with id ${id} deleted`, data: user })
+  } catch(err) {
+    next(err) 
   }
 };
 
@@ -115,9 +151,40 @@ const createSkill = async (skill) => {
   return newSkill;
 };
 
+const login = async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      res.status(400).send('Please provide an email and password')
+    }
+
+    const user = await User.findOne({ email }).select('+password');
+
+    if (!user) {
+      res.status(401).send('Invalid credentials')
+    }
+
+    const doesPassMatch = await user.matchPassword(password);
+    if (!doesPassMatch) {
+      res.status(401).send('Invalid credentials')
+    }
+
+    const token = user.getSignedJwtToken();
+
+    res.json({ success: true, token })
+
+  } catch(err) {
+    next(err)
+  }
+}
+
 module.exports = {
   getUsers,
   getUser,
+  createUser,
   updateUser,
+  deleteUser,
   getUsersBySkill,
+  getMe,
 };

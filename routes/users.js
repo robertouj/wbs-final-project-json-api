@@ -1,16 +1,24 @@
 const express = require("express");
-const { getUsers, getUser, getUsersBySkill, updateUser } = require("../controllers/users");
+const {
+  getUsers,
+  getUser,
+  getUsersBySkill,
+  updateUser,
+  deleteUser,
+} = require("../controllers/users");
+const protect = require("../middlewares/auth");
 
 const router = express.Router();
 
-/* GET skills listing. */
+/* GET users listing. */
 router.route("/").get(getUsers);
 
-router.route("/:id")
-  .get(getUser)
-  .put(updateUser);
+router
+  .route("/:id")
+  .get(protect, getUser)
+  .put(protect, updateUser)
+  .delete(protect, deleteUser);
 
-router.route("/skills/:name")
-  .get(getUsersBySkill);
+router.route("/skills/:name").get(protect, getUsersBySkill);
 
 module.exports = router;

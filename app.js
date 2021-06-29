@@ -7,6 +7,7 @@ require('colors');
 require('dotenv').config();
 
 const indexRouter = require('./routes/index');
+const authRouter = require('./routes/auth');
 const usersRouter = require('./routes/users');
 const skillsRouter = require('./routes/skills');
 
@@ -29,6 +30,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
+app.use('/auth', authRouter);
 app.use('/users', usersRouter);
 app.use('/skills', skillsRouter);
 app.use(errorHandler);
