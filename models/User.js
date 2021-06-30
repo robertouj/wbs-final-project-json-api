@@ -83,9 +83,9 @@ UserSchema.pre('save', async function(next) {
   this.password = await bcrypt.hash(this.password, salt);
 });
 
-UserSchema.pre('findOneAndUpdate', function(next) {
-  this._update.password = bcrypt.hashSync(this._update.password, 10)
-  next();
+UserSchema.pre('findOneAndUpdate', async function(next) {
+  const salt = await bcrypt.genSalt(10);
+  this._update.password = await bcrypt.hash(this._update.password, salt);  
 });
 
 UserSchema.methods.getSignedJwtToken = function() {
