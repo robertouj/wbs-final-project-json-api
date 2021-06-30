@@ -86,12 +86,14 @@ const createUser = async (req, res, next) => {
 const updateUser = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { name, photo, bio, experience, availability, skills, email, password } = req.body;
-    const newSkillsArray = await getSkillsArray(skills);
+    // const { name, photo, bio, experience, availability, skills, email, password } = req.body;
+    const { email, password } = req.body;
+    //const newSkillsArray = await getSkillsArray(skills);
 
     const user = await User.findByIdAndUpdate(
       id,
-      { name, photo, bio, experience, availability, skills: newSkillsArray, email, password },
+      // { name, photo, bio, experience, availability, skills: newSkillsArray, email, password },
+      { email, password },
       { new: true }
     );
 
