@@ -41,3 +41,38 @@ Check the login:
 curl -d '{"email": "zubat@pokemon.com", "password": "iamthenight"}' -H "Content-Type: application/json" -X POST http://localhost:5000/auth/login
 
 curl -d '{"email": "dmitris@batch13.com", "password": "iamthemasterofcss"}' -H "Content-Type: application/json" -X POST http://localhost:5000/auth/register
+
+
+
+---
+
+## LOGIN 
+
+curl -d '{"email": "roberto123@gmail.com", "password": "roberto123"}' -H "Content-Type: application/json" -X POST http://localhost:5000/auth/login
+
+TOKEN:
+
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxMDE5MjQyYzViNjQ5NDNmMGUzM2Q1OCIsImlhdCI6MTYyNzU3MDI0MH0.J88sLKTtr5D5Koo3MFb61HnYV1XKhokA-Iv0WG-0pfg
+
+AUTH:
+
+curl -H "Content-Type: application/json" -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxMDE5MjQyYzViNjQ5NDNmMGUzM2Q1OCIsImlhdCI6MTYyNzU3MDI0MH0.J88sLKTtr5D5Koo3MFb61HnYV1XKhokA-Iv0WG-0pfg" http://localhost:5000/auth/me
+
+
+curl -H "Content-Type: application/json" -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxMDE5MjQyYzViNjQ5NDNmMGUzM2Q1OCIsImlhdCI6MTYyNzU3MDI0MH0.J88sLKTtr5D5Koo3MFb61HnYV1XKhokA-Iv0WG-0pfg" http://localhost:5000/auth/me
+
+Id: 61019242c5b64943f0e33d58
+
+curl -H "Content-Type: application/json" -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxMDE5MjQyYzViNjQ5NDNmMGUzM2Q1OCIsImlhdCI6MTYyNzU3MDI0MH0.J88sLKTtr5D5Koo3MFb61HnYV1XKhokA-Iv0WG-0pfg" http://localhost:5000/users/61019242c5b64943f0e33d58
+
+
+## Update 
+
+curl -d '{"username": "Roberto", "email": "roberto123@gmail.com", "bio": "To sorry world an at do spoil along. Incommode he depending do frankness remainder to. Edward day almost active him friend thirty piqued. People as period twenty my extent as. Set was better abroad ham plenty secure had horses.", "password": "roberto123"}' -H "Content-Type: application/json" -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxMDE5MjQyYzViNjQ5NDNmMGUzM2Q1OCIsImlhdCI6MTYyNzU3MDI0MH0.J88sLKTtr5D5Koo3MFb61HnYV1XKhokA-Iv0WG-0pfg" -X PUT http://localhost:5000/users/61019242c5b64943f0e33d58
+
+curl -d '{"username": "Roberto", "email": "roberto123@gmail.com", "password": "roberto123"}' -H "Content-Type: application/json" -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxMDE5MjQyYzViNjQ5NDNmMGUzM2Q1OCIsImlhdCI6MTYyNzU3MDI0MH0.J88sLKTtr5D5Koo3MFb61HnYV1XKhokA-Iv0WG-0pfg" -X PUT http://localhost:5000/users/61019242c5b64943f0e33d58
+
+
+curl -d '{"username": "Roberto", "email": "roberto123@gmail.com", "password": "roberto123"}' -H "Content-Type: application/json" -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxMDE5MjQyYzViNjQ5NDNmMGUzM2Q1OCIsImlhdCI6MTYyNzg5NDMwOH0.maN1SvQigBYqBiQQNVkTuwVCjY2GVT3oNqnPPRHwK0I" -X PUT http://localhost:5000/users/61019242c5b64943f0e33d58
+
+
