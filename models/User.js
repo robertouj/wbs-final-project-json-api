@@ -28,12 +28,7 @@ const UserSchema = new Schema({
   // photo: {
   //   type: String,
   //   required: false,
-  // },
-  // bio: {
-  //   type: String,
-  //   required: false,
-  //   maxlength: [500, "Maximum 500 characters"]get,
-  // },
+  // },  
   // experience: {
   //   type: Number,
   //   required: false,
@@ -45,13 +40,6 @@ const UserSchema = new Schema({
   //   _id: false,
   //   required: [true, "Please add availability"],
   // },
-  // skills: [
-  //   {
-  //     type: Schema.Types.ObjectId,
-  //     ref: "Skill",
-  //     required: true,
-  //   },
-  // ],
   username: {
     type: String,
     required: [true, 'Please add a user name'],
@@ -72,6 +60,18 @@ const UserSchema = new Schema({
     minlength: 8,
     select: false // don't show the password in the API
   },
+  bio: {
+    type: String,
+    required: false,
+    maxlength: [500, "Maximum 500 characters"],
+  },
+  skills: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Skill",
+      required: true,
+    }
+  ]
 },
 {
   versionKey: false, // remove the version parameter __v
@@ -84,7 +84,7 @@ UserSchema.pre('save', async function(next) {
 });
 
 UserSchema.pre('findOneAndUpdate', function(next) {
-  this._update.password = bcrypt.hashSync(this._update.password, 10)
+  if (this._update.password) this._update.password = bcrypt.hashSync(this._update.password, 10)
   next();
 });
 
